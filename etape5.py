@@ -6,10 +6,10 @@ Pour chaque matricule en erreur, on raisonne par écart de % sur chaque case :
   écart négatif : Cegid a mis trop ici       -> case de Départ  (à vider)
   écart positif : Cegid a mis pas assez ici  -> case d'Arrivée  (à alimenter)
 
-On apparie ensuite les départs et les arrivées d'un même agent, 
-ce qui gère aussi les cas à plusieurs départs ou arrivées. 
-Chaque ligne produite décrit un transfert : sortir X % d'un SS1/SS2 
-(Départ, côté Cegid) vers un autre SS1/SS2 (Arrivée, côté Comète).
+On apparie ensuite les départs et les arrivées d'un même agent (appariement
+glouton), ce qui gère aussi les cas à plusieurs départs ou arrivées. Chaque
+ligne produite décrit un transfert : sortir X % d'un SS1/SS2 (Départ, côté
+Cegid) vers un autre SS1/SS2 (Arrivée, côté Comète).
 
 Le récapitulatif Débit/Crédit en euros du Word (5.3) est abandonné : pas de montant.
 """
@@ -17,7 +17,12 @@ import pandas as pd
 import config
 
 
-def run(comparaison):
+def run(comparaison, noms=None):
+    """
+    comparaison : tableau issu des étapes 3 et 4.
+    noms        : dictionnaire matricule -> Nom Prénom (pour l'affichage).
+    """
+    noms = noms or {}
     df = comparaison
     err_mats = sorted(df.loc[df["pct_ok"] == "FAUX", "matricule"].unique())
 
@@ -42,9 +47,10 @@ def run(comparaison):
             montant = min(dep[2], arr[2])
             lignes.append({
                 "MATRICULE": mat,
+                "Nom Prénom": noms.get(mat, ""),
                 "Départ SS1": dep[0], "Départ SS2": dep[1],
-                "Arrivée SS1": arr[0], "Arrivée SS2": arr[1],
                 "% déplacé": montant,
+                "Arrivée SS1": arr[0], "Arrivée SS2": arr[1],
                 "Commentaire": type_err,
             })
             dep[2] -= montant
@@ -55,8 +61,8 @@ def run(comparaison):
                 j += 1
 
     result = pd.DataFrame(lignes, columns=[
-        "MATRICULE", "Départ SS1", "Départ SS2",
-        "Arrivée SS1", "Arrivée SS2", "% déplacé", "Commentaire"])
+        "MATRICULE", "Nom Prénom", "Départ SS1", "Départ SS2",
+        "% déplacé", "Arrivée SS1", "Arrivée SS2", "Commentaire"])
     print(f"   Etape 5 : {len(result)} lignes de retraitement "
           f"pour {len(err_mats)} matricules en erreur")
     return result

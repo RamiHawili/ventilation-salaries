@@ -89,7 +89,8 @@ def main():
     cegid = etape2.run(cegid_raw)              # 2 : nettoyage du Cegid
     comparaison = etape3.run(cegid, comete)    # 3 : comparaison des deux bases
     comparaison = etape4.run(comparaison)      # 4 : type d'erreur par écart
-    retraitement = etape5.run(comparaison)     # 5 : feuille Départ -> Arrivée
+    noms = dict(zip(cegid["matricule"], cegid["nom_prenom"]))  # matricule -> nom
+    retraitement = etape5.run(comparaison, noms)  # 5 : feuille Départ -> Arrivée
     cas_att = etape6.run(cegid, comete)        # 6 : relevé des cas ATT
 
     # -----------------------------------------------------------------
@@ -142,7 +143,7 @@ def main():
         # Onglet 4 : la feuille de retraitement (ce qui doit bouger, d'où vers où)
         write_sheet(w, retraitement, "Comparaison", "Comparaison : retraitements (Départ -> Arrivée)",
                     "Étape 5 : pourcentage à déplacer de Cegid (Départ) vers Comète (Arrivée)",
-                    header="gris", text_cols=["MATRICULE"], pct_cols=["% déplacé"],
+                    header="gris", text_cols=["MATRICULE", "Nom Prénom"], pct_cols=["% déplacé"],
                     min_width=18)
 
         # Onglet 5 : les cas ATT (attente), à vérifier manuellement

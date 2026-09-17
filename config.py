@@ -9,11 +9,11 @@ COMETE_FILE = "data/VENTILATION DES SALARIES - COMETE.xlsx"
 OUTPUT_FILE = "data/ventilation_salaries_resultat.xlsx"
 
 # Onglet où lire les données dans chaque fichier
-CEGID_SHEET = "Page 1"
-COMETE_SHEET = "Feuil1"
+CEGID_SHEET = "cegid"
+COMETE_SHEET = "comete"
 
 # Écart de pourcentage toléré lors de la comparaison (étape 3).
-# 0.005 = 0,5 point : absorbe les arrondis (33,33 x 3 = 99,99 ; 0,9999... = 1).
+# 0.001 = 0,1 point : absorbe les arrondis (33,33 x 3 = 99,99 ; 0,9999... = 1).
 TOLERANCE_PCT = 0.001
 
 # Correspondance des colonnes source vers des noms internes communs.
